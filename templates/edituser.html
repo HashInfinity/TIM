@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title> TIM | Edit User Details  </title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- <link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet"> -->
+  <link href="{{ url_for('static', filename='css/bootswatch.css')}}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+  <link href="{{ url_for('static', filename='css/fileinput.min.css')}}" media="all" rel="stylesheet" type="text/css" />
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+  <script src="{{ url_for('static', filename='js/fileinput.js')}}" type="text/javascript"></script>
+
+  <!-- favicon -->
+  <link rel="icon" type="image/png" href="{{ url_for('static',filename='images/favicon.png') }}"/>
+</head>
+
+<body style="padding-top: 70px;">
+  <div class="container">
+
+    {% include 'navbar.html' %}
+    <!-- main right col -->
+    {%  include 'flash.html' %}
+
+    <div class="row">
+	  <div class="col-md-8 col-md-offset-2">
+	    <div class="panel-group" id="accordion">
+		  
+
+      <div class="panel panel-primary">
+              <div class="panel-heading">
+                
+                    <h4 class="panel-title">
+                    <a data-toggle="collapse" class="btn-block" data-parent="#accordion" href="#collapseOne">Change User Detail</a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <h3>Change User Details</h3> <br/>
+                      <div class="panel panel-default">
+                    <div class="panel-body">
+              <form id="formuser"  role="form" method="post">
+              <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                  <div class="form-group">
+                          <label for="name">NAME</label>
+                        <input type="text" class="form-control" name="name" value="{{g.user.name}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">EMAIL</label>
+                        <p class="form-control-static">{{g.user.email}}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mobilenumber">MOBILE NUMBER</label>
+                          <div class="input-group">
+                            <div class="input-group-addon">+91</div>
+                        <input class="form-control" type="text" name="mobilenumber" value="{{g.user.mobilenumber}}" required maxlength="10">
+                          </div>
+                    </div>
+
+                      <div class="form-group">
+                        <label for="password">PASSWORD</label>
+                        <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
+                      </div>
+                      <input type="hidden" name="edittype" value="userdetails">
+                      <button type="submit" class="btn btn-success" id="submit-button">Update</button>
+                      <a id ="cancel-button" class="btn btn-warning" href="{{url_for('edituser')}}">
+                        Cancel </a>
+                    </form>
+                  </div>
+                </div>
+                    </div>
+                </div>
+            </div>
+		  
+		  <div class="panel panel-primary">
+            <div class="panel-heading">
+               <h4 class="panel-title">
+                    <a data-toggle="collapse" class="btn-block" data-parent="#accordion" href="#collapseTwo">Change Password</a>
+                </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse">
+               <div class="panel-body">
+                 <h3>Change Password</h3> <br/>
+          	       <div class="panel panel-default">
+          	         <div class="panel-body">
+		  			   <form id="formpwd"  role="form" method="post">
+		  			   <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+             			<div class="form-group">
+                			<label for="password">CURRENT PASSWORD</label>
+                			<input type="password" class="form-control" name="old-password" placeholder="Enter current password" required>
+              			</div>
+              
+              			<div class="form-group">
+               				<label for="password">NEW PASSWORD</label>
+                			<input type="password" class="form-control" name="new-password" placeholder="Enter new password" required>
+              			</div>
+
+              			<div class="form-group">
+                			<label for="password-confirm">CONFIRM PASSWORD</label>
+                			<input type="password" class="form-control" name="password-confirm" placeholder="Confirm password" required>
+              			</div>
+                    <input type="hidden" name="edittype" value="changepassword">
+              			<button type="submit" class="btn btn-success" id="submit-button">CHANGE PASSWORD</button>
+              			<a id ="cancel-button" class="btn btn-warning" href="{{url_for('edituser')}}">
+                  		Cancel </a>
+            		   </form>
+ 	       			 </div>
+     	   		   </div>
+           		 </div>
+        	   </div>
+            </div>
+
+	     
+        	
+			  </div>
+  			</div>
+		  </div>
+		  
+		 
+		</div>
+	  </div>
+    </div>   
+  </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+</body>
+</html>

@@ -1,0 +1,27 @@
+Hi there,
+<br/>
+<br/>
+
+There is a new update on TIM.
+<br/>
+New discussion created by '{{discussion.user.name}}' in the category '{{discussion.category.name}}':
+<br/>
+<br/>
+<hr>
+<strong>Title: {{discussion.title}}</strong>
+<br/><br/>
+<strong>Description:</strong>
+<br/>
+<p>{{discussion.text}}</p>
+<br/>
+<br/>
+<strong>Attachments: </strong>{{discussion.documents.filter_by(filetype='image').all() | length}} image(s) and
+{{discussion.documents.filter_by(filetype='doc').all() | length}} file(s).
+<hr>
+<br/>
+Hope you catch the update soon.
+<br/>
+<br/>
+Cheers,
+<br/>
+Team TIM

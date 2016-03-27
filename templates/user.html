@@ -1,0 +1,242 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title> TIM | Posts by teacher: {{user.name}} </title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- <link href="{{ url_for('static', filename='css/bootstrai.css')}}" rel="stylesheet"> -->
+  <link href="{{ url_for('static', filename='css/bootswatch.css')}}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+  <!-- favicon -->
+  <link rel="icon" type="image/png" href="{{ url_for('static',filename='images/favicon.png') }}"/>
+</head>
+
+<body style="padding-top: 70px;">
+{% include 'navbar.html' %}
+  <div class="container">
+
+    
+    <!-- main right col -->
+    {% include 'flash.html'%}
+
+    <h3>Posts by teacher: {{user.name}} </h3>
+      <div class="row">
+
+            {% for i  in items %}
+            {% if i.type == 'post' %}
+            <div class="col-md-6">
+            <div class="panel panel-primary">
+            <div class="panel-heading">
+            <span style="color: white;"> Assignment </span>
+            </div>
+              <div class="panel-body">
+              <a href="{{url_for('viewuser', user_id=i.user.id)}}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span style="font-size:14px;">{{i.user.name}}</span></a> 
+
+              <div class="pull-right"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>{{utc_to_local(i.timestamp).strftime('%Y-%m-%d %H:%M:%S %Z ')}}</div>
+              <hr/>
+              <h4>{{i.title}}</h4>
+               <p class="posttext">{{i.text}}</p>                         
+               
+               {% if i.documents.filter_by(filetype='image').all() %}
+               <hr/>
+
+                <div class = "row">
+                <ul class="list-unstyled">
+                {% for i in i.documents.filter_by(filetype='image').all() %}
+                <li>
+                 <div class="col-md-3">
+                 <a  class="thumbnail">
+                   <img src="{{ url_for('static', filename='files/images/%s'%(i.filename))}}">
+                    </a>
+               </div>
+               </li>
+               {% endfor %}
+               </ul>
+               </div>
+
+               {% endif %}
+            
+              {% if i.documents.filter_by(filetype='doc').all() %}
+               <hr/>
+
+                <div class = "row">
+                {% for i in i.documents.filter_by(filetype='doc').all() %}
+                <div class="col-md-5">
+            <a href="{{ url_for('static', filename='files/docs/%s'%(i.filename))}}"><div class="well"><span class="glyphicon glyphicon-file" aria-hidden="true"></span>{{i.filename}}</div></a>
+              </div>
+              {% endfor %}
+              
+               </div>
+
+               {% endif %}
+               
+               <hr/>
+               <a href="{{url_for('index', category_id=i.category.id)}}"> <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>Category: {{i.category.name}}</a>
+               <div class="pull-right">
+               <a href="{{url_for('viewpost', post_id=i.id)}}" style="padding-right: 1em;"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>{{i.comments.all() | length }} Comment(s)</a>
+               <a href="{{url_for('viewpost', post_id=i.id)}}" ><span class="glyphicon glyphicon-link" aria-hidden="true"></span>Permalink</a></div>
+               
+             </div>
+             </div>
+             </div>
+             
+            {% elif i.type == 'discussion' %}
+            <div class="col-md-6">
+            <div class="panel panel-default">
+            <div class="panel-heading">
+            <span > Discussion </span>
+            </div>
+            <div class="panel-body">
+              <a href="{{url_for('viewuser', user_id=i.user.id)}}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span style="font-size:14px;">{{i.user.name}}</span></a> <div class="pull-right"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>{{utc_to_local(i.timestamp).strftime('%Y-%m-%d %H:%M:%S %Z ')}}</div>
+              <hr/>
+              <h4>{{i.title}}</h4>
+               <p class="posttext">{{i.text}}</p>                         
+               
+               {% if i.documents.filter_by(filetype='image').all() %}
+               <hr/>
+
+                <div class = "row">
+                <ul class="list-unstyled">
+                {% for i in i.documents.filter_by(filetype='image').all() %}
+                <li>
+                 <div class="col-md-3">
+                 <a  class="thumbnail">
+                   <img src="{{ url_for('static', filename='files/images/%s'%(i.filename))}}">
+                    </a>
+               </div>
+               </li>
+               {% endfor %}
+               </ul>
+               </div>
+
+               {% endif %}
+            
+              {% if i.documents.filter_by(filetype='doc').all() %}
+               <hr/>
+
+                <div class = "row">
+                {% for i in i.documents.filter_by(filetype='doc').all() %}
+                <div class="col-md-5">
+            <a href="{{ url_for('static', filename='files/docs/s'%(i.filename))}}"><div class="well"><span class="glyphicon glyphicon-file" aria-hidden="true"></span>{{i.filename}}</div></a>
+              </div>
+              {% endfor %}
+              
+               </div>
+
+               {% endif %}
+               
+               <hr/>
+               <a href="{{url_for('discussions', category_id=i.category.id)}}"> <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>Category: {{i.category.name}}</a>
+               <div class="pull-right">
+               <a href="{{url_for('viewdiscussion', discussion_id=i.id)}}" style="padding-right: 1em;"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span>{{i.comments.all() | length }} Comment(s)</a>
+               <a href="{{url_for('viewdiscussion', discussion_id=i.id)}}" ><span class="glyphicon glyphicon-link" aria-hidden="true"></span>Permalink</a></div>
+               
+             </div>
+             </div>
+             </div>
+            {% elif i.type == 'assignment' %}
+            <div class="col-md-6">
+            <div class="panel panel-success">
+            <div class="panel-heading">
+            <span style="color: white;"> Assignment </span>
+            </div>
+              <div class="panel-body">
+              <a href="{{url_for('viewuser', user_id=i.user.id)}}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span style="font-size:14px;">{{i.user.name}}</span></a> <div class="pull-right"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>{{utc_to_local(i.timestamp).strftime('%Y-%m-%d %H:%M:%S %Z ')}}</div>
+              <hr/>
+              <h4>{{i.title}}</h4>
+               <p class="posttext">{{i.text}}</p>                         
+               <hr/>
+                  <h5> Due date: {{i.duedate.strftime('%B %d, %Y')}}</h5>
+               {% if i.documents.filter_by(filetype='image').all() %}
+               <hr/>
+
+                <div class = "row">
+                <ul class="list-unstyled">
+                {% for i in i.documents.filter_by(filetype='image').all() %}
+                <li>
+                 <div class="col-md-3">
+                 <a  class="thumbnail">
+                   <img src="{{ url_for('static', filename='files/images/%s'%(i.filename))}}">
+                    </a>
+               </div>
+               </li>
+               {% endfor %}
+               </ul>
+               </div>
+
+               {% endif %}
+            
+              {% if i.documents.filter_by(filetype='doc').all() %}
+               <hr/>
+
+                <div class = "row">
+                {% for i in i.documents.filter_by(filetype='doc').all() %}
+                <div class="col-md-5">
+            <a href="{{ url_for('static', filename='files/docs/%s'%(i.filename))}}"><div class="well"><span class="glyphicon glyphicon-file" aria-hidden="true"></span>{{i.filename}}</div></a>
+              </div>
+              {% endfor %}
+              
+               </div>
+
+               {% endif %}
+               
+               <hr/>
+               <a href="{{url_for('assignments', category_id=i.category.id)}}"> <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>Category: {{i.category.name}}</a>
+               <a href="{{url_for('viewassignment', assignment_id=i.id)}}" class="pull-right"><span class="glyphicon glyphicon-link" aria-hidden="true"></span>Permalink</a>
+               
+             </div>
+             </div>
+             </div>
+             {% endif %}
+            {% endfor %}
+ 
+
+
+
+  </div>
+
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+      <div class="modal-content"> 
+        <div class = "center-block">        
+          <div class="modal-body"> 
+
+          </div>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+
+    <!-- Placed at the end of the document so the pages load faster -->
+<script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+       $('a img').on('click',function(){
+        var src = $(this).attr('src');
+        var img = '<img class="img-responsive center-block" src="' + src + '"/>';
+        $('#myModal').modal();
+        $('#myModal').on('shown.bs.modal', function(){
+          $('#myModal .modal-body').html(img);
+        });
+        $('#myModal').on('hidden.bs.modal', function(){
+          $('#myModal .modal-body').html('');
+        });
+      });  
+     })
+    </script>
+  </body>
+
+  </html>

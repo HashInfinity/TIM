@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title> TIM | Admin</title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- <link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet"> -->
+  <link href="{{ url_for('static', filename='css/bootswatch.css')}}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+  <!-- favicon -->
+  <!--<link rel="icon" type="image/png" href="{{ url_for('static',filename='images/favicon.png') }}"/> -->
+</head>
+
+<body style="padding-top: 70px;">
+  
+  {% include 'navbar.html' %}
+  <div id="modal-bg" class="modal-bg">
+
+  <div class="container">
+    
+      <div class="row">
+      <div class="col-md-2" >
+      <h3></h3>
+        <ul class="nav nav-sidebar">
+            <li><a href="{{url_for('admin_verify')}}">Verify Users</a></li>
+            <li class="active"><a href="{{url_for('admin_teachers')}}">All Teachers</a></li>
+            <li ><a href="{{url_for('admin_students')}}">All Students</a></li>
+            <li ><a href="{{url_for('admin_comments')}}">Flagged Comments</a></li>
+            <li ><a href="{{url_for('admin_discussions')}}">Flagged Discussions</a></li>
+          </ul>
+      </div>
+         <div class="col-md-10" >
+         <div class="panel">
+         <div class="panel-body">
+         <h3>All Teachers:</h3>
+         <table class="table table-hover">
+          <thead>
+            <tr> 
+              <th>Name</th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in teachers %}
+             <tr class="active">  
+              
+              <td>{{user.name}}</td>
+              <td>{{user.email}}</td>
+              <td>{{user.mobilenumber}}</td>
+              <td>
+              {% if not user.is_admin %}
+               <button type="submit" class="btn btn-success btn-sm" userid="{{user.id}}">Make Admin</button>
+               {% else %}
+               Already an admin
+               {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+         </table>
+         </div>
+         </div>
+         </div>
+            
+ 
+
+           </div>
+     </div>        
+  </div>
+
+  <form id="userform" method="post" class="form-inline" tyle="display: inline-block">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="formtype" value="">
+            <input type="hidden" id="userid" class="form-control" name="userid" value="" >
+    </form>
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+       $('a img').on('click',function(){
+        var src = $(this).attr('src');
+        var img = '<a href = "' + src + '"><img class="img-responsive center-block" src="' + src + '"/></a>';
+        $('#myModal').modal();
+        $('#myModal').on('shown.bs.modal', function(){
+          $('#myModal .modal-body').html(img);
+
+          $('#modal-bg').addClass('modal-open');
+        });
+        $('#myModal').on('hidden.bs.modal', function(){
+          $('#myModal .modal-body').html('');
+
+          $('#modal-bg').removeClass('modal-open');
+        });
+      });  
+
+       $('.btn-success').on('click',function(){
+        var userid = $(this).attr('userid');
+        $('[name=formtype]').val('makeadmin');
+        $('[name=userid]').val(userid);
+        $('#userform').submit();
+       });
+     })
+    </script>
+  </body>
+
+  </html>

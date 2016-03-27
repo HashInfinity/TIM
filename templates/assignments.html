@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title> TIM | Assignments</title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- <link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet"> -->
+  <link href="{{ url_for('static', filename='css/bootswatch.css')}}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+  <!-- favicon -->
+  <!--<link rel="icon" type="image/png" href="{{ url_for('static',filename='images/favicon.png') }}"/> -->
+</head>
+
+<body style="padding-top: 70px;">
+
+  {% include 'navbar.html' %}
+   <div id="modal-bg" class="modal-bg">
+
+  <div class="container">
+
+    
+    <!-- main right col -->
+    {% include 'flash.html'%}
+
+    {% if g.user.user_role == 'teacher' %}
+    <a href="{{url_for('newassignment')}}" class="btn btn-default btn-lg btn-block"><i class="glyphicon glyphicon-plus"></i>Add Assignment.</a>
+    {% endif %}
+      {% if bycategory %}
+    <h3>Assignments by category:  {{categoryname}} 
+    {% else %}
+      <h3>All Assignments
+      {% endif %}
+      <div class="btn-group pull-right">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    Select Category <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu">
+  <li><a href="{{url_for('assignments')}}">All categories</a></li>
+    {% for c in categories %}
+    <li><a href="{{url_for('assignments', category_id=c.id)}}">{{c.name}}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+ </h3>
+    
+    
+    <div class="row">
+
+             
+            {% for p in assignments %}
+
+                
+             <div class="col-md-12">
+            <div class="panel panel-default">
+              <div class="panel-body">
+              <a href="{{url_for('viewuser', user_id=p.user.id)}}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span style="font-size:14px;">{{p.user.name}}</span></a> <div class="pull-right"><span class="glyphicon glyphicon-time" aria-hidden="true"></span>{{utc_to_local(p.timestamp).strftime('%Y-%m-%d %H:%M:%S %Z ')}}</div>
+              <hr/>
+              <h4>{{p.title}}</h4>
+               <p class="posttext">{{p.text}}</p>                         
+               <hr/>
+                  <h5> Due date: {{p.duedate.strftime('%B %d, %Y')}}</h5>
+               {% if p.documents.filter_by(filetype='image').all() %}
+               <hr/>
+
+                <div class = "row">
+                <ul class="list-unstyled">
+                {% for i in p.documents.filter_by(filetype='image').all() %}
+                <li>
+                 <div class="col-md-3">
+                 <a  class="thumbnail">
+                   <img src="{{ url_for('static', filename='files/images/%s'%(i.filename))}}">
+                    </a>
+               </div>
+               </li>
+               {% endfor %}
+               </ul>
+               </div>
+
+               {% endif %}
+            
+              {% if p.documents.filter_by(filetype='doc').all() %}
+               <hr/>
+
+                <div class = "row">
+                {% for i in p.documents.filter_by(filetype='doc').all() %}
+                <div class="col-md-5">
+            <a href="{{ url_for('static', filename='files/docs/%s'%(i.filename))}}"><div class="well"><span class="glyphicon glyphicon-file" aria-hidden="true"></span>{{i.filename}}</div></a>
+              </div>
+              {% endfor %}
+              
+               </div>
+
+               {% endif %}
+               
+               <hr/>
+               <a href="{{url_for('assignments', category_id=p.category.id)}}"> <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>Category: {{p.category.name}}</a>
+               <a href="{{url_for('viewassignment', assignment_id=p.id)}}" class="pull-right"><span class="glyphicon glyphicon-link" aria-hidden="true"></span>Permalink</a>
+               
+             </div>
+             </div>
+             </div>
+             {% endfor %}
+ 
+
+           </div>
+     </div>        
+  </div>
+
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></button>
+        <div class="modal-header">
+         
+        </div>  
+        <div class = "center-block">        
+          <div class="modal-body"> 
+
+          </div>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+    
+
+  </div>
+  </div>
+
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></button>
+        <div class="modal-header">
+
+        </div>  
+        <div class = "center-block">        
+          <div class="modal-body"> 
+
+          </div>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+     $('a img').on('click',function(){
+      var src = $(this).attr('src');
+      var img = '<a href = "' + src + '"><img class="img-responsive center-block" src="' + src + '"/></a>';
+      $('#myModal').modal();
+      $('#myModal').on('shown.bs.modal', function(){
+        $('#myModal .modal-body').html(img);
+
+        $('#modal-bg').addClass('modal-open');
+      });
+      $('#myModal').on('hidden.bs.modal', function(){
+        $('#myModal .modal-body').html('');
+
+        $('#modal-bg').removeClass('modal-open');
+      });
+    });  
+   })
+  </script>
+</body>
+
+</html>

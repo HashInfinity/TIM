@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title> TIM | Discussion {{post.id}}</title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- <link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet"> -->
+  <link href="{{ url_for('static', filename='css/bootswatch.css')}}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+  <!-- favicon -->
+  <link rel="icon" type="image/png" href="{{ url_for('static',filename='images/favicon.png') }}"/>
+  <script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+</head>
+
+<body style="padding-top: 70px;">
+  <div class="container">
+
+    {% include 'navbar.html' %}
+    <!-- main right col -->
+    <div class="">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <h3>Discussion {{post.id}}:</h3>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <a href="{{url_for('viewuser', user_id=post.user.id)}}">
+                  <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                  <span style="font-size:14px;">{{post.user.name}}</span>
+                </a> 
+                  <div class="pull-right">
+                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                    {{utc_to_local(post.timestamp).strftime('%Y-%m-%d %H:%M:%S %Z ')}}
+                  </div>
+                  <hr/>
+                  <h3>{{post.title}}</h3>
+                  <p class="postp posttext">{{post.text}}</p>                         
+                  {% if post.documents.filter_by(filetype='image').all() %}
+                  <hr/>
+                  <div class = "row">
+                  <ul class="list-unstyled">
+                  {% for i in post.documents.filter_by(filetype='image').all() %}
+                  <li>
+                    <div class="col-md-3">
+                      <a  class="thumbnail">
+                        <img src="{{ url_for('static', filename='files/images/%s'%(i.filename))}}">
+                      </a>
+                    </div>
+                  </li>
+                 {% endfor %}
+                 </ul>
+                 </div>
+                 {% endif %}
+            
+                 {% if post.documents.filter_by(filetype='doc').all() %}
+                 <hr/>
+
+                 <div class = "row">
+                 {% for i in post.documents.filter_by(filetype='doc').all() %}
+                 <div class="col-md-5">
+                 <a href="{{ url_for('static', filename='files/docs/%s'%(i.filename))}}">
+                 <div class="well">
+                   <span class="glyphicon glyphicon-file" aria-hidden="true"></span>{{i.filename}}
+                 </div>
+                 </a>
+                 </div>
+                 {% endfor %}
+              
+               </div>
+
+               {% endif %}
+               
+               <hr/>
+               <a href="{{url_for('discussions', category_id=post.category.id)}}"> <span class="glyphicon glyphicon-tag" aria-hidden="true"></span>Category: {{post.category.name}}</a>
+               {% if post.user_id == g.user.id %}
+               <a href="" class="pull-right del" data-toggle="modal" data-target="#delModal"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete discussion</a>
+               {% endif %}
+               {% if g.user.user_role == 'teacher' and post.user.id != g.user.id %}
+            <form id="flagdiscussion" method = "post" class = "form form-inline">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="formtype" value="flagdiscussion">
+            <a class="pull-right">
+            <button type="submit" class="btn btn-link">
+          <i class="glyphicon glyphicon-flag"></i> 
+             Flag Discussion</button>
+
+            </a>
+            </form>
+            {% endif %}
+    <br/>
+		<hr/>
+		<h4>Comments:</h3>
+		<br>
+		<div class="media">
+		<a class="media-left">
+        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+    </a>
+   			<div class="media-body">
+      			<div class="media-heading"><strong>{{g.user.name}}</strong>:</div>
+		<form method="post" class="form-inline">
+			
+        		<input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        		<input type="hidden" name="formtype" value="addcomment">
+        		<textarea id="commenttext" class="form-control" name="commenttext" value="" style="width:80%" placeholder = "Add new comment" rows="1" required></textarea><br><br>
+        		<button type="submit" class="btn btn-primary btn-sm">Submit</button>
+        		<hr>
+		</form>
+		
+		</div>
+		</div>
+		{% for comment in post.comments.all() %}
+		<div class="media comment-media">
+   			<a class="pull-left"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></a>
+   			<div class="media-body">
+
+   			
+      			<h6 class="media-heading"><strong>{{comment.user.name}}</strong>
+      			
+      			<div class="pull-right">
+      			<span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+     			<span>{{utc_to_local(comment.timestamp).strftime('%Y-%m-%d %H:%M:%S')}} </span><br>
+     			{% if comment.user.id == g.user.id %}
+          <form id="delcomment" method = "post" class = "form">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="formtype" value="delcomment">
+          <input type="hidden" name="commentid" value="{{comment.id}}">
+      			<a class="pull-right">
+      			<button type="submit" class="btn btn-link">
+  				<i class="glyphicon glyphicon-trash"></i> 
+				</button>
+        </form>
+
+        {% endif %}
+      			</a>
+            {% if g.user.user_role == 'teacher' and comment.user.id != g.user.id %}
+            <form id="delcomment" method = "post" class = "form">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="formtype" value="flagcomment">
+          <input type="hidden" name="commentid" value="{{comment.id}}">
+            <a class="pull-right">
+            <button type="submit" class="btn btn-link">
+          <i class="glyphicon glyphicon-flag"></i> 
+             </button>
+
+            </a>
+            </form>
+            {% endif %}
+
+      			 </div><br/>
+      			 <blockquote>
+      			 <span class="comment"> {{comment.text}} </span></h5>
+      			 </blockquote>	
+     		</form>
+   			</div>
+		</div>
+		<hr>
+		{% endfor %}
+		
+		
+		<!-- <ul>
+		{% for comment in post.comments.all() %}
+		<li> {{comment.user.name}}: {{comment.text}} </li>
+		{% endfor %}
+		
+		</ul> -->
+               
+             </div>
+             </div>
+             </div>
+
+
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+      <div class="modal-content"> 
+        <div class = "center-block">        
+          <div class="modal-body"> 
+
+          </div>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Delete Discussion</h4>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete the discussion titled "{{post.title}}"?
+      </div>
+      <div class="modal-footer">
+      <form method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="formtype" value="deldiscussion">
+        <button type="submit" class="btn btn-primary">Yes</button>
+        <button type="button" class="btn" data-dismiss="modal">No</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+    <script type="text/javascript">
+
+    $("#commenttext").click(function() {
+      $(this).attr('rows',3)
+      });
+
+      $(document).ready(function(){
+       $('a img').on('click',function(){
+        var src = $(this).attr('src');
+        var img = '<a href = "' + src + '"><img class="img-responsive center-block" src="' + src + '"/></a>';
+        $('#myModal').modal();
+        $('#myModal').on('shown.bs.modal', function(){
+          $('#myModal .modal-body').html(img);
+        });
+        $('#myModal').on('hidden.bs.modal', function(){
+          $('#myModal .modal-body').html('');
+        });
+      });  
+     })
+    </script>
+  </body>
+
+  </html>

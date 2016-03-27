@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title> TIM | New Post</title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- <link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet"> -->
+  <link href="{{ url_for('static', filename='css/bootswatch.css')}}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/fileinput.min.css')}}" media="all" rel="stylesheet" type="text/css" />
+<script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+  <script src="{{ url_for('static', filename='js/fileinput.js')}}" type="text/javascript"></script>
+
+  <!-- favicon -->
+  <link rel="icon" type="image/png" href="{{ url_for('static',filename='images/favicon.png') }}"/>
+</head>
+
+<body style="padding-top: 70px;">
+  <div class="container">
+
+    {% include 'navbar.html' %}
+    <!-- main right col -->
+    {%  include 'flash.html' %}
+
+      <div class="row">
+
+
+
+       <div class="col-md-8 col-md-offset-2">
+         <h3>Add new post</h3>
+
+         <div class="panel panel-default">
+          <div class="panel-body">
+            <form id="file-form"  role="form" method="post" enctype=multipart/form-data>
+              <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+              <div class="form-group">
+                <label for="title">POST TITLE</label>
+                <input type="text" class="form-control" name="title" placeholder="Enter title" required>
+              </div>
+              <div class="form-group">
+                <label for="posttext">POST TEXT</label>
+                <textarea class="form-control" rows="2" name="posttext" required placeholder="Enter text"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="category">CATEGORY</label>
+                <select name = "category" class="form-control">
+                  {% for i in categories %}
+                  <option value="{{i.id}}">{{i.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputFile">FILE INPUT</label>
+                <input type="file" id="file" name="file" multiple>
+                <p class="help-block">If uploading multiple files, select all files at once.</p>
+              </div>
+
+              <button type="submit" class="btn btn-success" id="submit-button">Add post</button>
+              <a id ="cancel-button" class="btn btn-warning" href="{{url_for('index')}}">
+                  Cancel </a>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+
+
+
+  </div>
+</div>
+
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+    <script type="text/javascript">
+      $("#file").fileinput({'showUpload':false});
+
+
+    var form = document.getElementById('file-form');
+    var fileSelect = document.getElementById('file');
+    var uploadButton = document.getElementById('submit-button');
+     var cancelButton = document.getElementById('cancel-button');
+
+    form.onsubmit = function(event) {
+      event.preventDefault();
+      uploadButton.innerHTML = 'Uploading...';
+       cancelButton.setAttribute('disabled','disabled');
+
+      var formsend = new FormData(this);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '', true);
+
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          uploadButton.innerHTML = 'Done';
+          window.location = '/posts';
+        } else {
+          alert('An error occurred!');
+        }
+      };
+
+      xhr.send(formsend);
+  }
+
+    </script>
+  </body>
+
+  </html>

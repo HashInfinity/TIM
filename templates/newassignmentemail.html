@@ -1,0 +1,32 @@
+Hi there,
+<br/>
+<br/>
+
+There is a new update on TIM.
+<br/>
+New assignment created by '{{assignment.user.name}}' in the category '{{assignment.category.name}}':
+<br/>
+<br/>
+<hr>
+<strong>Title: {{assignment.title}}</strong>
+<br/><br/>
+<strong>Description:</strong>
+<br/>
+<p>{{assignment.text}}</p>
+<br/>
+<br/>
+<strong>Last date of submission:</strong>
+<br/>
+<p>{{assignment.duedate.strftime('%B %d, %Y')}}</p>
+<br/>
+<br/>
+<strong>Attachments: </strong>{{assignment.documents.filter_by(filetype='image').all() | length}} image(s) and
+{{assignment.documents.filter_by(filetype='doc').all() | length}} file(s).
+<hr>
+<br/>
+Hope you catch the update soon.
+<br/>
+<br/>
+Cheers,
+<br/>
+Team TIM

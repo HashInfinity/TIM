@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title> TIM | Admin</title>
+
+  <!-- Bootstrap core CSS -->
+  <!-- <link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet"> -->
+  <link href="{{ url_for('static', filename='css/bootswatch.css')}}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+  <!-- favicon -->
+  <!--<link rel="icon" type="image/png" href="{{ url_for('static',filename='images/favicon.png') }}"/> -->
+</head>
+
+<body style="padding-top: 70px;">
+  
+  {% include 'navbar.html' %}
+  <div id="modal-bg" class="modal-bg">
+
+  <div class="container">
+    
+      <div class="row">
+      <div class="col-md-2" >
+      <h3></h3>
+        <ul class="nav nav-sidebar">
+            <li><a href="{{url_for('admin_verify')}}">Verify Users</a></li>
+            <li><a href="{{url_for('admin_teachers')}}">All Teachers</a></li>
+            <li><a href="{{url_for('admin_students')}}">All Students</a></li>
+            <li class="active"><a href="{{url_for('admin_comments')}}">Flagged Comments<span class="sr-only">(current)</span></a></li>
+            <li><a href="{{url_for('admin_discussions')}}">Flagged Discussions</a></li>
+          </ul>
+      </div>
+         <div class="col-md-10" >
+         <div class="panel">
+         <div class="panel-body">
+         <h3>Flagged Comments:</h3>
+         <hr/>
+         {% for c in flaggedcomments %}
+            <h6>Comment By: {{c.user.name}}</h6>
+            {% if c.post_id %}
+            <h6>Comment On Post: <a href="{{url_for('viewpost',post_id = c.post_id)}}"> {{c.post.title}} </a></h6>
+            {% else %}
+            <h6>Comment On Discussion: <a href="{{url_for('viewdiscussion',discussion_id = c.discussion_id)}}"> {{c.discussion.title}} </a></h6>
+            {% endif %}
+            <blockquote>
+             <span class="comment"> {{c.text}} </span></h6>
+             </blockquote>
+
+             <button type="submit" class="btn btn-success btn-sm" commentid="{{c.id}}">UNFLAG</button> <button type="submit" class="btn btn-warning btn-sm" commentid="{{c.id}}">DELETE</button>
+             <hr/>
+         {% endfor %}
+         </div>
+         </div>
+         </div>
+            
+ 
+
+           </div>
+     </div>        
+  </div>
+
+  <form id="userform" method="post" class="form-inline" tyle="display: inline-block">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="formtype" value="">
+            <input type="hidden" id="commentid" class="form-control" name="commentid" value="" >
+    </form>
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+       $('a img').on('click',function(){
+        var src = $(this).attr('src');
+        var img = '<a href = "' + src + '"><img class="img-responsive center-block" src="' + src + '"/></a>';
+        $('#myModal').modal();
+        $('#myModal').on('shown.bs.modal', function(){
+          $('#myModal .modal-body').html(img);
+
+          $('#modal-bg').addClass('modal-open');
+        });
+        $('#myModal').on('hidden.bs.modal', function(){
+          $('#myModal .modal-body').html('');
+
+          $('#modal-bg').removeClass('modal-open');
+        });
+      });  
+
+       $('.btn-success').on('click',function(){
+        var commentid = $(this).attr('commentid');
+        $('[name=formtype]').val('unflag');
+        $('[name=commentid]').val(commentid);
+        $('#userform').submit();
+       });
+       $('.btn-warning').on('click',function(){
+        var commentid = $(this).attr('commentid');
+        $('[name=formtype]').val('delete');
+        $('[name=commentid]').val(commentid);
+        $('#userform').submit();
+       });
+     })
+    </script>
+  </body>
+
+  </html>

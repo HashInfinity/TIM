@@ -1,0 +1,27 @@
+Hi there,
+<br/>
+<br/>
+
+There is a new update on TIM.
+<br/>
+New post created by '{{post.user.name}}' in the category '{{post.category.name}}':
+<br/>
+<br/>
+<hr>
+<strong>Title: {{post.title}}</strong>
+<br/><br/>
+<strong>Description:</strong>
+<br/>
+<p>{{post.text}}</p>
+<br/>
+<br/>
+<strong>Attachments: </strong>{{post.documents.filter_by(filetype='image').all() | length}} image(s) and
+{{post.documents.filter_by(filetype='doc').all() | length}} file(s).
+<hr>
+<br/>
+Hope you catch the update soon.
+<br/>
+<br/>
+Cheers,
+<br/>
+Team TIM

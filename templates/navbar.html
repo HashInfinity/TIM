@@ -1,0 +1,68 @@
+<!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <!--<a class="navbar-brand" href="{{url_for('index')}}"></a>-->
+          <a class="navbar-brand" href="{{url_for('index')}}"><img style="max-height:50px; margin-top: -7px;" src="{{ url_for('static',filename='images/logo.png') }}"></a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+        {% if g.user.is_authenticated() %}
+        <ul class="nav navbar-nav">
+        {% if g.user.user_role == 'teacher' %}
+          <li class = "{% if page == 'newpost' %}{{'active'}}{% endif %}"><a href="{{url_for('newpost')}}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add post </a></li>
+          {% endif %}
+          
+        <li class="dropdown {{'active' if page=='user'}}">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Teachers <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="{{url_for('index')}}">All teachers</a></li>
+            {% for t in teachers %}
+            {% if t.verified %}
+            <li><a href="{{url_for('viewuser', user_id=t.id)}}">{{t.name}}</a></li>
+            {% endif %}
+            {% endfor %}
+            </li>
+          </ul>
+          
+          <li class="{{'active' if page=='posts'}}"><a href="{{url_for('posts')}}"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>Posts</a></li>
+          
+           <li class="{{'active' if page=='discussions'}}"><a href="{{url_for('discussions')}}"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>Discussions</a></li>
+           
+           <li class="{{'active' if page=='assignments'}}"><a href="{{url_for('assignments')}}"><span class="glyphicon glyphicon-book" aria-hidden="true"></span>Assignments</a></li>
+           
+           {% if g.user.is_admin %}
+          <li class="{{'active' if page=='admin'}}"><a href="{{url_for('admin_verify')}}"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span>Admin</a></li>
+          {% endif %}
+          
+        </ul>
+        {% endif %}
+        
+        <ul class="nav navbar-nav navbar-right">
+            {% if g.user.is_authenticated() %}
+            <li class="dropdown {{'active' if page=='user'}}">
+          	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+          	<span class="glyphicon glyphicon-user" aria-hidden="true"></span>{{g.user.name}} (Me)
+          	<span class="caret"> </span></a>
+          	<ul class="dropdown-menu" role="menu">
+            <li><a href="{{url_for('edituser')}}">Edit User Details</a></li>
+ 			<li><a href="{{url_for('logout')}}">Logout</span> </a>          
+          </ul>
+        </li>
+              
+              
+              </a></li>
+              {% else %}
+              <li class="{% if page == 'login' %}{{'active'}}{% endif %}"><a href="{{url_for('login')}}">Login</a></li>
+              <li class = "{% if page == 'register' %}{{'active'}}{% endif %}"><a href="{{url_for('register')}}">Register</a></li>
+              {% endif %}
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
