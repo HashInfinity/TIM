@@ -8,7 +8,7 @@ TIM Isn't Moodle (TIM) is an online engagement platform for students and teacher
 * User registrations for Student and Teacher
 * User login, and viewing posts
 * Add post for Teachers
-* Attch images and files with posts
+* Attach images and files with posts
 * View and download attachments
 * Filter posts by category and teacher who posted them  
 
